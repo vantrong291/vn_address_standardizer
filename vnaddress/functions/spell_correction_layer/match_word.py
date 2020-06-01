@@ -1,4 +1,4 @@
-from fuzzywuzzy import process, fuzz
+from rapidfuzz import process, fuzz
 
 
 def match_word(error_dict, word_to_check, standard_single_names):
@@ -9,7 +9,7 @@ def match_word(error_dict, word_to_check, standard_single_names):
         name_to_check = word_to_check
         # standard_single_names_lower = [name.lower() for name in standard_single_names]
         if name_to_check not in standard_single_names:
-            extraction = (process.extractOne(name_to_check, error_dict[key], scorer=fuzz.ratio))
+            extraction = process.extractOne(name_to_check, error_dict[key], scorer=fuzz.ratio)
             if extraction[1] > weight:
                 # print(weight, key, name_to_check)
                 weight = extraction[1]
@@ -30,7 +30,7 @@ def match_sentence(error_dict, sentence_to_check, standard_addresses):
         # name_to_check = sentence_to_check
         # standard_single_names_lower = [name.lower() for name in standard_single_names]
         if sentence_to_check not in standard_addresses:
-            extraction = (process.extractOne(sentence_to_check, error_dict[key], scorer=fuzz.ratio))
+            extraction = process.extractOne(sentence_to_check, error_dict[key], scorer=fuzz.ratio)
             if extraction[1] > weight:
                 # print(weight, key, name_to_check)
                 weight = extraction[1]

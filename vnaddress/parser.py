@@ -3,7 +3,7 @@ import multiprocessing as mp
 import os
 from os.path import dirname, join
 
-from fuzzywuzzy import process, fuzz
+from rapidfuzz import process, fuzz
 
 from .constants import ERROR_DICT, SINGLE_VOWELS, STANDARD_ADDRESSES, STANDARD_SINGLE_NAMES, FULL_ADDRRESS_ERROR_DICT
 from .functions.acronym_layer import acronym_execute

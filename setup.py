@@ -21,7 +21,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'nltk', 'joblib', 'sklearn_crfsuite', 'fuzzywuzzy', 'python-Levenshtein'
+        'nltk', 'joblib', 'sklearn_crfsuite', 'rapidfuzz'
     ],
     include_package_data=True,
 )
