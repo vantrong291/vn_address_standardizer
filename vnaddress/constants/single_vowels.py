@@ -1,3 +1,4 @@
+SPELL_DICT_LENGTH = 2
 SINGLE_VOWELS = {
   "à": [
     "à",

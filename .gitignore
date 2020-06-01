@@ -1,6 +1,7 @@
 /vnaddress.egg-info/
 /dist/
 build/
+.idea/
 .settings/
 .project
 .classpath

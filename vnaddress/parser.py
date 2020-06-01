@@ -19,9 +19,10 @@ STANDARDIZER_MODEL_PATH = 'vnaddress/models'
 
 
 class VNAddressStandardizer(object):
-    def __init__(self, raw_address, comma_handle):
+    def __init__(self, raw_address, comma_handle, detail = False):
         self.raw_address = raw_address
         self.comma_handle = comma_handle
+        self.detail = detail
 
     def combined_processing(self, raw_address, comma_handle=COMMA_HANDLE):
         error_dict = ERROR_DICT
@@ -59,6 +60,7 @@ class VNAddressStandardizer(object):
     def execute(self):
         try:
             raw_address = self.raw_address
+            detail = self.detail
             comma_handle = self.comma_handle if self.comma_handle else COMMA_HANDLE
             result, match_check, missing_tag_list = self.combined_processing(raw_address, comma_handle)
 
@@ -82,5 +84,7 @@ class VNAddressStandardizer(object):
         except Exception as e:
             logging.error('Error at', exc_info=e)
         else:
-            print(list2sentence(result))
-            # return Response({"success": True, "data": result_data})
+            if detail:
+                print(result_data)
+            else:
+                print(list2sentence(result))
