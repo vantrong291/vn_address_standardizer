@@ -1,2 +1,2 @@
 from .constants import ACRONYM_DICT
-from .acronym_execute import acronym_execute
+from .acronym_execute import acronym_execute_raw_address, acronym_execute_list_address

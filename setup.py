@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='vnaddress',
-    version='0.9.8',
+    version='1.0.1',
     scripts=['vnas'],
     author="vantrong291",
     author_email="vantrong291@gmail.com",

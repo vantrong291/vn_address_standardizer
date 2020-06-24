@@ -1,12 +1,11 @@
 import logging
 import multiprocessing as mp
-import os
-from os.path import dirname, join
+from os.path import dirname
 
 from fuzzywuzzy import process, fuzz
 
-from .constants import ERROR_DICT, SINGLE_VOWELS, STANDARD_ADDRESSES, STANDARD_SINGLE_NAMES, FULL_ADDRRESS_ERROR_DICT
-from .functions.acronym_layer import acronym_execute
+from vnaddress.functions.acronym_layer import acronym_execute_raw_address, acronym_execute_list_address
+from .constants import ERROR_DICT, STANDARD_ADDRESSES, STANDARD_SINGLE_NAMES, FULL_ADDRRESS_ERROR_DICT
 from .functions.crf_layer import crf_execute
 from .functions.crf_layer.constants import FULL_TAG_LIST
 from .functions.crf_layer.crf_execute import list2sentence, extract_relative_tag
@@ -24,24 +23,27 @@ class VNAddressStandardizer(object):
         self.comma_handle = comma_handle
         self.detail = detail
 
-    def combined_processing(self, raw_address, comma_handle=COMMA_HANDLE):
+    def combined_processing(self, raw_address, comma_handle=COMMA_HANDLE, scorer = fuzz.ratio):
         error_dict = ERROR_DICT
         standard_addresses = STANDARD_ADDRESSES
         full_address_error_dict = FULL_ADDRRESS_ERROR_DICT
         standard_single_names = STANDARD_SINGLE_NAMES
 
         # logger.info(raw_address)
-        acronym_fixed_address = acronym_execute(raw_address)
+        lowered_address = raw_address.lower()
         # logger.info(acronym_fixed_address)
 
         if comma_handle:
-            address2list = sentence2list(acronym_fixed_address)
+            address2list = sentence2list(lowered_address)
+            acronym_fixed_address = acronym_execute_list_address(address2list)
             pool = mp.Pool(mp.cpu_count())
             corrected_address2list = pool.starmap(match_word,
-                                                  [(error_dict, name, standard_single_names) for name in address2list])
+                                                  [(error_dict, name, standard_single_names) for name in
+                                                   acronym_fixed_address])
             pool.close()
 
         else:
+            acronym_fixed_address = acronym_execute_raw_address(lowered_address)
             corrected_address = match_sentence(full_address_error_dict, acronym_fixed_address, standard_addresses)
             corrected_address2list = sentence2list(corrected_address)
             # logger.info(corrected_address2list)
@@ -53,7 +55,7 @@ class VNAddressStandardizer(object):
         # logger.info(missing_tag_list)
 
         name_only_crf_result = ", ".join([item[0] for item in crf_result])
-        match_check = process.extractOne(name_only_crf_result, standard_addresses, scorer=fuzz.ratio)
+        match_check = process.extractOne(name_only_crf_result, standard_addresses, scorer=scorer)
 
         return crf_result, match_check, missing_tag_list
 
@@ -65,7 +67,7 @@ class VNAddressStandardizer(object):
             result, match_check, missing_tag_list = self.combined_processing(raw_address, comma_handle)
 
             if match_check[1] < 100:
-                result, match_check, _ = self.combined_processing(match_check[0], comma_handle)
+                result, match_check, _ = self.combined_processing(match_check[0], comma_handle, scorer=fuzz.partial_ratio)
                 if "PX" in missing_tag_list:
                     result = result[1:]
                     if "QH" in missing_tag_list:
