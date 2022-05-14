@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='vnaddress',
-    version='1.0.1',
+    version='1.0.5',
     scripts=['vnas'],
     author="vantrong291",
     author_email="vantrong291@gmail.com",
@@ -14,6 +14,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/vantrong291/vn_address_standardizer",
     packages=setuptools.find_packages(),
+    data_files=[("vnaddress",
+                 ["vnaddress/models/finalized_model.sav"])],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
